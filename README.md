@@ -8,10 +8,9 @@
 
 ```js
 {
-  "twitterSecret": "big long string",
-  "screenName": "@austinpray",
+  "id": "UUID",
   "email": "austin@austinpray.com",
-  "avatarUrl": "https://example.com/shermm.jpg"
+  "secret": "big long string"
 }
 ```
 
@@ -26,10 +25,10 @@
   "displayname": "Water The Plant",
   "deadline": "2015-01-1T00:00:00Z",
   "yee": [
-    // []User
+    // User UUID
   ],
   "orNah": [
-    // []User
+    // User UUID
   ],
   "yeeCount": 1,
   "orNahCount": 1
@@ -61,6 +60,38 @@ Return all the plants the server knows about.
 ### GET `plants/:name`
 
 Return a specific plant. 
+
+### POST `login`
+
+#### Request
+
+```js
+{
+  "email": "austin@austinpray.com",
+  "secret": "big long string"
+}
+```
+
+#### Response
+
+```js
+{
+  "success": true,
+  "email": "austin@austinpray.com",
+  "secret": "big long string"
+}
+```
+
+### POST `vote/:id`
+
+```js
+{
+  "email": "austin@austinpray.com",
+  "secret": "big long string",
+  "yee": true,
+  "orNah": false
+}
+```
 
 ### GET `whatdo`
 
