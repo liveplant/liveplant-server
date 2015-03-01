@@ -1,0 +1,11 @@
+{
+  "name": "liveplant server",
+  "description": "the internet takes care of a plant",
+  "repository": "https://github.com/liveplant/liveplant-server",
+  "logo": "https://avatars2.githubusercontent.com/u/11252818?v=3&s=200",
+  "keywords": ["go", "liveplant", "server"],
+  "addons": ["redistogo:nano"],
+  "env": {
+    "BUILDPACK_URL": "https://github.com/kr/heroku-buildpack-go.git"
+  }
+}
