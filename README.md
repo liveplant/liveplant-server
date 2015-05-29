@@ -1,7 +1,39 @@
 Liveplant Server
 ====
 
-Liveplant server is a REST api for [liveplant.io][]
+Liveplant server is a REST API for [liveplant.io][]
+
+## Requirements
+
+<table>
+  <tr>
+    <th>Thing</th>
+    <th>Version</th>
+    <th>Install With</th>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://golang.org">
+        go
+      </a>
+    </td>
+    <td>1.4</td>
+    <td>
+      <a href="https://github.com/meatballhat/gimme#installation--usage">
+        gimme
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://github.com/ddollar/foreman">
+        foreman
+      </a> (optional)
+    </td>
+    <td>stable</td>
+    <td><pre>gem install foreman</pre></td>
+  </tr>
+</table>
 
 ## Endpoints
 
@@ -15,3 +47,4 @@ is only taken action if the new action's timestamp is newer.
 - [JSON Schema](schema/current_action/GET/schema.json)
 
 [liveplant.io]: https://github.com/liveplant/liveplant.io
+[foreman]: https://github.com/ddollar/foreman
