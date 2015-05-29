@@ -12,6 +12,6 @@
   "env": {
   },
   "addons": [
-    "redistogo",
+    "heroku-redis:test",
   ]
 }
