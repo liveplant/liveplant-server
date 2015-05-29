@@ -1,0 +1,17 @@
+{
+  "name": "liveplant",
+  "description": "a REST API for liveplant.io",
+  "keywords": [
+
+  ],
+  "website": "https://liveplant.herokuapp.com/",
+  "repository": "https://github.com/liveplant/liveplant-server",
+  "logo": "",
+  "scripts": {
+  },
+  "env": {
+  },
+  "addons": [
+    "redistogo",
+  ]
+}
