@@ -18,7 +18,7 @@ fmt:
 install: $(SOURCES)
 	godep go install
 
-run: 
+run: liveplant-server
 	foreman start
 
 clean: 
