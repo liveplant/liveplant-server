@@ -1,1 +1,1 @@
-web: ./liveplant-server
+web: liveplant-server
