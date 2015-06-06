@@ -1,0 +1,35 @@
+{
+	"ImportPath": "github.com/liveplant/liveplant-server",
+	"GoVersion": "go1.4.2",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/Sirupsen/logrus",
+			"Comment": "v0.8.2-2-g6ba91e2",
+			"Rev": "6ba91e24c498b49d0363c723e9e2ab2b5b8fd012"
+		},
+		{
+			"ImportPath": "github.com/carbocation/interpose",
+			"Rev": "50c09d12f8624ab10532f931cb630d0bf5f7c2c7"
+		},
+		{
+			"ImportPath": "github.com/gorilla/context",
+			"Rev": "215affda49addc4c8ef7e2534915df2c8c35c6cd"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Rev": "8a875a034c69b940914d83ea03d3f1299b4d094b"
+		},
+		{
+			"ImportPath": "github.com/tylerb/graceful",
+			"Comment": "v1.1",
+			"Rev": "ff79a7f00848198d26054b472aafb1043c4b3507"
+		},
+		{
+			"ImportPath": "golang.org/x/net/netutil",
+			"Rev": "6fbb23f992482174ea92b118e7c417b1a0828806"
+		}
+	]
+}

@@ -1,68 +1,50 @@
-# liveplant Server
+Liveplant Server
+====
 
-## Structs
+Liveplant server is a REST API for [liveplant.io][]
 
-### User
+## Requirements
 
-#### Example
-
-```js
-{
-  "twitterSecret": "big long string",
-  "screenName": "@austinpray",
-  "email": "austin@austinpray.com",
-  "avatarUrl": "https://example.com/shermm.jpg"
-}
-```
-
-### Poll
-
-#### Example
-
-```js
-{
-  "id": "UUID",
-  "action": "water",
-  "displayname": "Water The Plant",
-  "deadline": "2015-01-1T00:00:00Z",
-  "yee": [
-    // []User
-  ],
-  "orNah": [
-    // []User
-  ],
-  "yeeCount": 1,
-  "orNahCount": 1
-}
-```
-
-### Plant
-
-#### Example
-
-```js
-{
-  "name": "big-john",
-  "displayName": "Big John",
-  "currentPolls": [
-    // []Poll
-  ]
-}
-```
+<table>
+  <tr>
+    <th>Thing</th>
+    <th>Version</th>
+    <th>Install With</th>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://golang.org">
+        go
+      </a>
+    </td>
+    <td>1.4</td>
+    <td>
+      <a href="https://github.com/meatballhat/gimme#installation--usage">
+        gimme
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://github.com/ddollar/foreman">
+        foreman
+      </a> (optional)
+    </td>
+    <td>stable</td>
+    <td><pre>gem install foreman</pre></td>
+  </tr>
+</table>
 
 ## Endpoints
 
-All endpoints are prefixed with `/api/v1/`
+### GET `/current_action`
 
-### GET `plants`
+This endpoint is polled by the liveplant hardware. It exposes an enumerable
+action string and a unix timestamp integer. The hardware knows when it last took action. An
+is only taken action if the new action's timestamp is newer.
 
-Return all the plants the server knows about.
+- [example](schema/current_action/GET/example.json)
+- [JSON Schema](schema/current_action/GET/schema.json)
 
-### GET `plants/:name`
-
-Return a specific plant. 
-
-### GET `whatdo`
-
-Return what the bot client should be doing right now. Grabs freshly expired
-deadlines (5 minutes).
+[liveplant.io]: https://github.com/liveplant/liveplant.io
+[foreman]: https://github.com/ddollar/foreman
