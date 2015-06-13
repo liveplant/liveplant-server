@@ -7,16 +7,13 @@ SOURCES = $(shell find . -name "*.go")
 all: liveplant-server
 
 liveplant-server: $(SOURCES)
-	godep go build .
+	godep go install ./...
 
 deps:
 	godep save -r ./...
 
 fmt:
 	go fmt *.go
-
-install: $(SOURCES)
-	godep go install
 
 run: liveplant-server
 	foreman start
