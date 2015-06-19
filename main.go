@@ -2,13 +2,21 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/Sirupsen/logrus"
+	log "github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/Sirupsen/logrus"
 	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/carbocation/interpose"
 	gorilla_mux "github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/gorilla/mux"
 	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/tylerb/graceful"
 	"net/http"
+	"net/http/httputil"
 	"os"
 	"time"
+)
+
+// Define string constants that correspond
+// to each supported action here
+const (
+	ActionWater   string = "water"
+	ActionNothing string = "nothing"
 )
 
 type Application struct {
@@ -21,10 +29,61 @@ type CurrentAction struct {
 
 func GetCurrentAction(w http.ResponseWriter, r *http.Request) {
 	action := &CurrentAction{
-		Action:        "water",
+		Action:        ActionWater,
 		UnixTimestamp: int64(time.Now().Unix()),
 	}
 	json.NewEncoder(w).Encode(action)
+}
+
+func PrintHttpRequest(r *http.Request) {
+	dump, err := httputil.DumpRequest(r, true)
+	if err == nil {
+		log.Println("Request received: \n" + string(dump))
+	} else {
+		log.Error("Error reading request: " + err.Error())
+	}
+}
+
+/*
+Example cURL commands for invoking the API on the commandline:
+
+curl -H "Content-Type: application/json" -X POST -d '{"someKey1":"someValue1","someKey2":"someValue2"}' http://127.0.0.1:5000/votes
+curl -H "Content-Type: application/json" -X POST -d '{"action":"water"}' http://127.0.0.1:5000/votes
+curl -H "Content-Type: application/json" -X POST -d '{"action":"nothing"}' http://127.0.0.1:5000/votes
+
+curl http://127.0.0.1:5000/current_action
+*/
+
+type Vote struct {
+	Action string `json:"action"`
+}
+
+func PostVotes(w http.ResponseWriter, r *http.Request) {
+
+	log.Info("PostVotes called")
+
+	// PrintHttpRequest(r)
+
+	decoder := json.NewDecoder(r.Body)
+	var vote Vote
+	err := decoder.Decode(&vote)
+
+	if err == nil {
+
+		if vote.Action == ActionWater {
+			log.Info("Voted for action \"" + ActionWater + "\"")
+		} else if vote.Action == ActionNothing {
+			log.Info("Voted for action \"" + ActionNothing + "\"")
+		} else {
+			log.Error("Encountered unhandled action \"" + vote.Action + "\"")
+		}
+
+	} else {
+		log.Error("Error parsing vote body: " + err.Error())
+	}
+
+	// TODO - output a json response
+	// { "success":bool, "status":int, "message":string }
 }
 
 func NewApplication() (*Application, error) {
@@ -36,11 +95,14 @@ func (app *Application) mux() *gorilla_mux.Router {
 	router := gorilla_mux.NewRouter()
 
 	router.HandleFunc("/current_action", GetCurrentAction).Methods("GET")
+	router.HandleFunc("/votes", PostVotes).Methods("POST")
 
 	return router
 }
 
 func main() {
+	log.Println("Launching liveplant server")
+
 	app, _ := NewApplication()
 	middle := interpose.New()
 
@@ -66,8 +128,11 @@ func main() {
 			Handler: middle,
 		},
 	}
+
+	log.Println("Running liveplant server on port " + ServerPort)
+
 	err := srv.ListenAndServe()
 	if err != nil {
-		logrus.Fatal(err.Error())
+		log.Fatal(err.Error())
 	}
 }
