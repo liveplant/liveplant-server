@@ -95,6 +95,9 @@ func PostVotes(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
+Example response from GET /votes
+A json dictionary that shows the current number
+of votes that have been cast for each action.
 {
   "actions": {
     "water": 1,
