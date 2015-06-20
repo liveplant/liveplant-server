@@ -41,12 +41,16 @@ func GetCurrentAction(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(action)
 }
 
-func PrintHttpRequest(r *http.Request) {
-	dump, err := httputil.DumpRequest(r, true)
-	if err == nil {
-		log.Println("Request received: \n" + string(dump))
-	} else {
-		log.Error("Error reading request: " + err.Error())
+func DebugPrintHttpRequest(r *http.Request) {
+	// If debug logger is enabled,
+	// print out all the details of the supplied HTTP request.
+	if log.GetLevel() == log.DebugLevel {
+		dump, err := httputil.DumpRequest(r, true)
+		if err == nil {
+			log.Debug("Request received: \n" + string(dump))
+		} else {
+			log.Debug("Error reading request: " + err.Error())
+		}
 	}
 }
 
@@ -66,9 +70,9 @@ type Vote struct {
 
 func PostVotes(w http.ResponseWriter, r *http.Request) {
 
-	log.Info("PostVotes called")
+	log.Debug("PostVotes called")
 
-	// PrintHttpRequest(r)
+	DebugPrintHttpRequest(r)
 
 	decoder := json.NewDecoder(r.Body)
 	var vote Vote
@@ -78,16 +82,16 @@ func PostVotes(w http.ResponseWriter, r *http.Request) {
 
 		if vote.Action == ActionWater {
 			VoteCountWater++
-			log.Info("Voted for action \"" + ActionWater + "\" ", VoteCountWater)
+			log.Debug("Voted for action \"" + ActionWater + "\" ", VoteCountWater)
 		} else if vote.Action == ActionNothing {
 			VoteCountNothing++
-			log.Info("Voted for action \"" + ActionNothing + "\" ", VoteCountNothing)
+			log.Debug("Voted for action \"" + ActionNothing + "\" ", VoteCountNothing)
 		} else {
-			log.Error("Encountered unhandled action \"" + vote.Action + "\"")
+			log.Debug("Encountered unhandled action \"" + vote.Action + "\"")
 		}
 
 	} else {
-		log.Error("Error parsing vote body: " + err.Error())
+		log.Debug("Error parsing vote body: " + err.Error())
 	}
 
 	// TODO - output a json response
@@ -111,7 +115,7 @@ type CurrentVoteCount struct {
 
 func GetVotes(w http.ResponseWriter, r *http.Request) {
 
-	log.Info("GetVotes called")
+	log.Debug("GetVotes called")
 
 	currentVotes := &CurrentVoteCount{
 		Actions: make(map[string]int),
@@ -138,7 +142,44 @@ func (app *Application) mux() *gorilla_mux.Router {
 	return router
 }
 
+func InitLogLevel() {
+	// Check if LIVEPLANTDEBUG environment variable is present.
+	// Check if --debug argument was supplied on the command line.
+	// If either of these are present, enable debug logger.
+
+	const DEBUG_ENVIROMENT_VAR string = "LIVEPLANTDEBUG"
+	const DEBUG_ARGUMENT       string = "--debug"
+
+	var debugLoggerEnabled bool = false
+
+	if len(os.Getenv(DEBUG_ENVIROMENT_VAR)) > 0 {
+		debugLoggerEnabled = true
+	}
+
+	commandLineArgs := os.Args
+
+	for _, argument := range commandLineArgs {
+		if argument == DEBUG_ARGUMENT {
+			debugLoggerEnabled = true
+			break
+		}
+	}
+
+	if debugLoggerEnabled {
+		// Log everything
+		log.SetLevel(log.DebugLevel)
+		log.Debug("Debug logging enabled")
+	} else {
+		// Only log fatal or panic events
+		// (events where the application is terminated)
+		log.SetLevel(log.FatalLevel)
+	}
+}
+
 func main() {
+
+	InitLogLevel()
+
 	log.Println("Launching liveplant server")
 
 	app, _ := NewApplication()
