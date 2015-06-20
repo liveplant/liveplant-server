@@ -19,6 +19,12 @@ const (
 	ActionNothing string = "nothing"
 )
 
+// Variables for keeping track of the current vote count
+// for each action.
+// These should probably be stored in redis at some point.
+var VoteCountWater   int = 0
+var VoteCountNothing int = 0
+
 type Application struct {
 }
 
@@ -71,9 +77,11 @@ func PostVotes(w http.ResponseWriter, r *http.Request) {
 	if err == nil {
 
 		if vote.Action == ActionWater {
-			log.Info("Voted for action \"" + ActionWater + "\"")
+			VoteCountWater++
+			log.Info("Voted for action \"" + ActionWater + "\" ", VoteCountWater)
 		} else if vote.Action == ActionNothing {
-			log.Info("Voted for action \"" + ActionNothing + "\"")
+			VoteCountNothing++
+			log.Info("Voted for action \"" + ActionNothing + "\" ", VoteCountNothing)
 		} else {
 			log.Error("Encountered unhandled action \"" + vote.Action + "\"")
 		}
@@ -83,7 +91,33 @@ func PostVotes(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO - output a json response
-	// { "success":bool, "status":int, "message":string }
+	// { "message":string }
+}
+
+/*
+{
+  "actions": {
+    "water": 1,
+    "nothing": 0
+  }
+}
+*/
+type CurrentVoteCount struct {
+	Actions map[string]int `json:"actions"`
+}
+
+func GetVotes(w http.ResponseWriter, r *http.Request) {
+
+	log.Info("GetVotes called")
+
+	currentVotes := &CurrentVoteCount{
+		Actions: make(map[string]int),
+	}
+
+	currentVotes.Actions[ActionWater]   = VoteCountWater
+	currentVotes.Actions[ActionNothing] = VoteCountNothing
+
+	json.NewEncoder(w).Encode(currentVotes)
 }
 
 func NewApplication() (*Application, error) {
@@ -96,6 +130,7 @@ func (app *Application) mux() *gorilla_mux.Router {
 
 	router.HandleFunc("/current_action", GetCurrentAction).Methods("GET")
 	router.HandleFunc("/votes", PostVotes).Methods("POST")
+	router.HandleFunc("/votes", GetVotes).Methods("GET")
 
 	return router
 }
