@@ -10,6 +10,7 @@ import (
 	"net/http/httputil"
 	"os"
 	"time"
+	"flag"
 )
 
 // Define string constants that correspond
@@ -143,26 +144,22 @@ func (app *Application) mux() *gorilla_mux.Router {
 }
 
 func InitLogLevel() {
-	// Check if LIVEPLANTDEBUG environment variable is present.
 	// Check if --debug argument was supplied on the command line.
-	// If either of these are present, enable debug logger.
+	// Check if LIVEPLANTDEBUG environment variable is present.
+	// (Environment variable takes precedence over command line flag)
+	// Enable or disable debug logger accordingly.
 
-	const DEBUG_ENVIROMENT_VAR string = "LIVEPLANTDEBUG"
-	const DEBUG_ARGUMENT       string = "--debug"
+	// Declare and parse command line flag
+	boolPtr := flag.Bool("debug", false, "Whether or not to enable debug logger.")
+	flag.Parse()
 
-	var debugLoggerEnabled bool = false
+	var debugLoggerEnabled bool = *boolPtr
 
-	if len(os.Getenv(DEBUG_ENVIROMENT_VAR)) > 0 {
+	if len(os.Getenv("LIVEPLANTDEBUG")) > 0 {
+		// Environment variable is present, so
+		// debug logger should be enabled.
+		// (overrides command line flag)
 		debugLoggerEnabled = true
-	}
-
-	commandLineArgs := os.Args
-
-	for _, argument := range commandLineArgs {
-		if argument == DEBUG_ARGUMENT {
-			debugLoggerEnabled = true
-			break
-		}
 	}
 
 	if debugLoggerEnabled {
