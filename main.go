@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	log "github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/Sirupsen/logrus"
 	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/carbocation/interpose"
 	gorilla_mux "github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/gorilla/mux"
@@ -10,7 +11,6 @@ import (
 	"net/http/httputil"
 	"os"
 	"time"
-	"flag"
 )
 
 // Define string constants that correspond
@@ -23,7 +23,7 @@ const (
 // Variables for keeping track of the current vote count
 // for each action.
 // These should probably be stored in redis at some point.
-var VoteCountWater   int = 0
+var VoteCountWater int = 0
 var VoteCountNothing int = 0
 
 type Application struct {
@@ -83,10 +83,10 @@ func PostVotes(w http.ResponseWriter, r *http.Request) {
 
 		if vote.Action == ActionWater {
 			VoteCountWater++
-			log.Debug("Voted for action \"" + ActionWater + "\" ", VoteCountWater)
+			log.Debug("Voted for action \""+ActionWater+"\" ", VoteCountWater)
 		} else if vote.Action == ActionNothing {
 			VoteCountNothing++
-			log.Debug("Voted for action \"" + ActionNothing + "\" ", VoteCountNothing)
+			log.Debug("Voted for action \""+ActionNothing+"\" ", VoteCountNothing)
 		} else {
 			log.Debug("Encountered unhandled action \"" + vote.Action + "\"")
 		}
@@ -122,7 +122,7 @@ func GetVotes(w http.ResponseWriter, r *http.Request) {
 		Actions: make(map[string]int),
 	}
 
-	currentVotes.Actions[ActionWater]   = VoteCountWater
+	currentVotes.Actions[ActionWater] = VoteCountWater
 	currentVotes.Actions[ActionNothing] = VoteCountNothing
 
 	json.NewEncoder(w).Encode(currentVotes)
