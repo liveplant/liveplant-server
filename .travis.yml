@@ -9,6 +9,9 @@ env:
 services:
   - redis-server
 
-before_script:
+before_install:
+  - ./fmt-check
+
+install:
   - go get github.com/tools/godep
   - go install
