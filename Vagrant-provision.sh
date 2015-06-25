@@ -5,7 +5,20 @@ set -eo pipefail
 
 # deps
 sudo apt-get update
+echo "installing the essentials"
 sudo apt-get install -y curl git mercurial make binutils bison gcc build-essential
+echo "installing PostgreSQL"
+sudo apt-get install -y postgresql postgresql-contrib
+echo "installing redis"
+(
+  cd /tmp
+  wget http://download.redis.io/redis-stable.tar.gz
+  tar xvzf redis-stable.tar.gz
+  cd redis-stable
+  make
+  sudo make install
+)
+
 
 GO_VERSION=go1.4.2
 
@@ -17,13 +30,16 @@ else
 fi
 
 echo "installing Go ${GO_VERSION}"
-
 [[ -s "/home/vagrant/.gvm/scripts/gvm" ]] && source "/home/vagrant/.gvm/scripts/gvm"
 /home/vagrant/.gvm/bin/gvm install ${GO_VERSION}
+gvm use ${GO_VERSION}
 
 echo "installing Godep"
-gvm use ${GO_VERSION}
-go get github.com/tools/godep
+go get -u github.com/tools/godep
+echo "installing forego"
+go get -u github.com/ddollar/forego
+echo "installing go-hotreload"
+go get -u github.com/ivpusic/go-hotreload/hr
 
 echo "populating user's bashrc"
 

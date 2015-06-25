@@ -1,0 +1,6 @@
+{
+    "port": 5000,
+    "cmd": "make run",
+    "watch": ["."],
+    "ignore": ["Godeps"]
+}

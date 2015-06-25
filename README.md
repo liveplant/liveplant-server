@@ -3,37 +3,33 @@ Liveplant Server [![Build Status](https://travis-ci.org/liveplant/liveplant-serv
 
 Liveplant server is a REST API for [liveplant.io][]
 
-## Requirements
+## Get started
 
-<table>
-  <tr>
-    <th>Thing</th>
-    <th>Version</th>
-    <th>Install With</th>
-  </tr>
-  <tr>
-    <td>
-      <a href="https://golang.org">
-        go
-      </a>
-    </td>
-    <td>1.4</td>
-    <td>
-      <a href="https://github.com/meatballhat/gimme#installation--usage">
-        gimme
-      </a>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <a href="https://github.com/ddollar/foreman">
-        foreman
-      </a> (optional)
-    </td>
-    <td>stable</td>
-    <td><pre>gem install foreman</pre></td>
-  </tr>
-</table>
+### Development Environment
+
+1. [Install Vagrant][]
+2. run `vagrant up`
+3. `vagrant ssh` to access your brand new, fully configured development
+   environment.
+
+### Development Commands
+
+- `make` will compile and install liveplant-server inside your GOPATH.
+- `make watch` will listen for changes in the source files and automatically
+  recompile and run liveplant-server.
+- `make fmt` will
+
+## Usage
+
+For usage run `liveplant-server -h`
+
+```
+-debug=false: Whether or not to enable debug logger.
+```
+
+## Environment Variables
+
+- `LIVEPLANTDEBUG` set to `1` to enable debug level logging.
 
 ## Endpoints
 
@@ -48,3 +44,4 @@ is only taken action if the new action's timestamp is newer.
 
 [liveplant.io]: https://github.com/liveplant/liveplant.io
 [foreman]: https://github.com/ddollar/foreman
+[Install Vagrant]: https://docs.vagrantup.com/v2/installation/index.html

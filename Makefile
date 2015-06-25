@@ -1,12 +1,13 @@
 SOURCES = $(shell find . -name "*.go")
+TARGET = $(GOPATH)/bin/liveplant-server
 
-.PHONY: fmt print-% deps run clean
+.PHONY: fmt print-% deps run clean watch
 
 # TODO: test task and coverage
 
-all: liveplant-server
+all: $(TARGET)
 
-liveplant-server: $(SOURCES)
+$(TARGET): $(SOURCES)
 	godep go install ./...
 
 deps:
@@ -15,11 +16,15 @@ deps:
 fmt:
 	go fmt *.go
 
-run: liveplant-server
-	foreman start
+run: $(TARGET)
+	forego start
+
+watch: $(TARGET)
+	export LIVEPLANTDEBUG=1
+	hr --conf hotreload.json
 
 clean: 
-	rm liveplant-server
+	rm $(TARGET)
 
 print-%:
 	@echo $*=$($*)
