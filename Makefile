@@ -1,6 +1,6 @@
 SOURCES = $(shell find . -name "*.go")
 
-.PHONY: fmt print-% deps run clean
+.PHONY: all deps fmt run clean print-% 
 
 # TODO: test task and coverage
 
