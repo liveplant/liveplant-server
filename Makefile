@@ -1,12 +1,13 @@
 SOURCES = $(shell find . -name "*.go")
+TARGET = $(GOPATH)/bin/liveplant-server
 
-.PHONY: all deps fmt run clean print-% 
+.PHONY: all deps fmt run clean print-%
 
 # TODO: test task and coverage
 
-all: liveplant-server
+all: $(TARGET)
 
-liveplant-server: $(SOURCES)
+$(TARGET): $(SOURCES)
 	godep go install ./...
 
 deps:
@@ -19,7 +20,7 @@ run: liveplant-server
 	foreman start
 
 clean: 
-	rm liveplant-server
+	rm $(TARGET)
 
 print-%:
 	@echo $*=$($*)
