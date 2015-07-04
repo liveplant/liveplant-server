@@ -36,10 +36,24 @@ type CurrentAction struct {
 
 func GetCurrentAction(w http.ResponseWriter, r *http.Request) {
 	action := &CurrentAction{
-		Action:        ActionWater,
+		Action:        GetWinningAction(),
 		UnixTimestamp: int64(time.Now().Unix()),
 	}
 	json.NewEncoder(w).Encode(action)
+}
+
+func GetWinningAction() string {
+	// Return the action that has the greatest number of votes
+
+	var winningAction string
+
+	if VoteCountWater > VoteCountNothing {
+		winningAction = ActionWater
+	} else {
+		winningAction = ActionNothing
+	}
+
+	return winningAction
 }
 
 func DebugPrintHttpRequest(r *http.Request) {
