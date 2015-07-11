@@ -142,6 +142,20 @@ func GetVotes(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(currentVotes)
 }
 
+/*
+Example response from GET /available_actions
+A json array containing the name of each available action in string form.
+[ "nothing", "water" ]
+*/
+func GetAvailableActions(w http.ResponseWriter, r *http.Request) {
+
+	log.Debug("GetAvailableActions called")
+
+	availableActions := [2]string{ ActionNothing, ActionWater }
+
+	json.NewEncoder(w).Encode(availableActions)
+}
+
 func NewApplication() (*Application, error) {
 	app := &Application{}
 	return app, nil
@@ -153,6 +167,7 @@ func (app *Application) mux() *gorilla_mux.Router {
 	router.HandleFunc("/current_action", GetCurrentAction).Methods("GET")
 	router.HandleFunc("/votes", PostVotes).Methods("POST")
 	router.HandleFunc("/votes", GetVotes).Methods("GET")
+	router.HandleFunc("/available_actions", GetAvailableActions).Methods("GET")
 
 	return router
 }
