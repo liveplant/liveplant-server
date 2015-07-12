@@ -16,7 +16,7 @@ deps:
 fmt:
 	go fmt *.go
 
-run: liveplant-server
+run: $(TARGET)
 	foreman start
 
 clean: 
