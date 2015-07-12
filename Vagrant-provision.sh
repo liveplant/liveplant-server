@@ -10,15 +10,7 @@ sudo apt-get install -y curl git mercurial make binutils bison gcc build-essenti
 echo "installing PostgreSQL"
 sudo apt-get install -y postgresql postgresql-contrib
 echo "installing redis"
-(
-  cd /tmp
-  wget http://download.redis.io/redis-stable.tar.gz
-  tar xvzf redis-stable.tar.gz
-  cd redis-stable
-  make
-  sudo make install
-)
-
+sudo apt-get install -y redis-server
 
 GO_VERSION=go1.4.2
 
