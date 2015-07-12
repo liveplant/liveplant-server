@@ -196,9 +196,8 @@ func main() {
 	if len(os.Getenv("PORT")) > 0 {
 		ServerPort = os.Getenv("PORT")
 	}
-	drainInterval, _ := time.ParseDuration("1s")
 	srv := &graceful.Server{
-		Timeout: drainInterval,
+		Timeout: 1 * time.Second,
 		Server: &http.Server{
 			Addr:    ":" + ServerPort,
 			Handler: middle,
