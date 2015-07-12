@@ -15,9 +15,11 @@ Liveplant server is a REST API for [liveplant.io][]
 ### Development Commands
 
 - `make` will compile and install liveplant-server inside your GOPATH.
-- `make watch` will listen for changes in the source files and automatically
-  recompile and run liveplant-server.
-- `make fmt` will
+- `make run` will compile and run your code. Your server will be available at
+  [localhost:5000](http://localhost:5000).
+- `make fmt` will format your code with gofmt.
+- `make watch` will watch your code for changes and recompile and relaunch the
+  server.
 
 ## Usage
 

@@ -20,8 +20,7 @@ run: $(TARGET)
 	forego start
 
 watch: $(TARGET)
-	export LIVEPLANTDEBUG=1
-	hr --conf hotreload.json
+	LIVEPLANTDEBUG=1 reflex -r '\.go$' -s -- sh -c 'make run'
 
 clean: 
 	rm $(TARGET)

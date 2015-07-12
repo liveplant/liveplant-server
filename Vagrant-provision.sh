@@ -30,8 +30,8 @@ echo "installing Godep"
 go get -u github.com/tools/godep
 echo "installing forego"
 go get -u github.com/ddollar/forego
-echo "installing go-hotreload"
-go get -u github.com/ivpusic/go-hotreload/hr
+echo "installing reflex"
+go get -u github.com/cespare/reflex
 
 echo "populating user's bashrc"
 
