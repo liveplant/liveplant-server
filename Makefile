@@ -1,7 +1,7 @@
 SOURCES = $(shell find . -name "*.go")
 TARGET = $(GOPATH)/bin/liveplant-server
 
-.PHONY: fmt print-% deps run clean watch
+.PHONY: all deps fmt run clean print-%
 
 # TODO: test task and coverage
 
