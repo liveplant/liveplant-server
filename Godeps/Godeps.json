@@ -24,8 +24,8 @@
 		},
 		{
 			"ImportPath": "github.com/tylerb/graceful",
-			"Comment": "v1.1",
-			"Rev": "ff79a7f00848198d26054b472aafb1043c4b3507"
+			"Comment": "v1.2.1",
+			"Rev": "ac9ebe4f1ee151ac1eeeaef32957085cba64d508"
 		},
 		{
 			"ImportPath": "golang.org/x/net/netutil",

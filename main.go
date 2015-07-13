@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	log "github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/Sirupsen/logrus"
 	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/carbocation/interpose"
 	gorilla_mux "github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/gorilla/mux"
@@ -10,7 +11,6 @@ import (
 	"net/http/httputil"
 	"os"
 	"time"
-	"flag"
 )
 
 // Define string constants that correspond
@@ -23,7 +23,7 @@ const (
 // Variables for keeping track of the current vote count
 // for each action.
 // These should probably be stored in redis at some point.
-var VoteCountWater   int = 0
+var VoteCountWater int = 0
 var VoteCountNothing int = 0
 
 type Application struct {
@@ -36,24 +36,10 @@ type CurrentAction struct {
 
 func GetCurrentAction(w http.ResponseWriter, r *http.Request) {
 	action := &CurrentAction{
-		Action:        GetWinningAction(),
+		Action:        ActionWater,
 		UnixTimestamp: int64(time.Now().Unix()),
 	}
 	json.NewEncoder(w).Encode(action)
-}
-
-func GetWinningAction() string {
-	// Return the action that has the greatest number of votes
-
-	var winningAction string
-
-	if VoteCountWater > VoteCountNothing {
-		winningAction = ActionWater
-	} else {
-		winningAction = ActionNothing
-	}
-
-	return winningAction
 }
 
 func DebugPrintHttpRequest(r *http.Request) {
@@ -97,10 +83,10 @@ func PostVotes(w http.ResponseWriter, r *http.Request) {
 
 		if vote.Action == ActionWater {
 			VoteCountWater++
-			log.Debug("Voted for action \"" + ActionWater + "\" ", VoteCountWater)
+			log.Debug("Voted for action \""+ActionWater+"\" ", VoteCountWater)
 		} else if vote.Action == ActionNothing {
 			VoteCountNothing++
-			log.Debug("Voted for action \"" + ActionNothing + "\" ", VoteCountNothing)
+			log.Debug("Voted for action \""+ActionNothing+"\" ", VoteCountNothing)
 		} else {
 			log.Debug("Encountered unhandled action \"" + vote.Action + "\"")
 		}
@@ -113,43 +99,33 @@ func PostVotes(w http.ResponseWriter, r *http.Request) {
 	// { "message":string }
 }
 
-type ActionInfo struct {
-	Name        string `json:"name"`
-	DisplayName string `json:"displayName"`
-	VoteCount   int    `json:"voteCount"`
-}
-
-type CurrentVoteInfo struct {
-	Actions []ActionInfo `json:"actions"`
-}
-
 /*
 Example response from GET /votes
+A json dictionary that shows the current number
+of votes that have been cast for each action.
 {
-  "actions": [
-    {
-      "name": "nothing",
-      "displayName": "Nothing",
-      "voteCount": 123
-    },
-    {
-      "name": "water",
-      "displayName": "Water",
-      "voteCount": 47
-    }
-  ]
+  "actions": {
+    "water": 1,
+    "nothing": 0
+  }
 }
 */
+type CurrentVoteCount struct {
+	Actions map[string]int `json:"actions"`
+}
+
 func GetVotes(w http.ResponseWriter, r *http.Request) {
 
-	currentVoteInfo := &CurrentVoteInfo{
-		Actions: []ActionInfo{
-				ActionInfo{Name: ActionNothing, DisplayName: "Nothing", VoteCount: VoteCountNothing},
-				ActionInfo{Name: ActionWater, DisplayName: "Water", VoteCount: VoteCountWater},
-			},
+	log.Debug("GetVotes called")
+
+	currentVotes := &CurrentVoteCount{
+		Actions: make(map[string]int),
 	}
 
-	json.NewEncoder(w).Encode(currentVoteInfo)
+	currentVotes.Actions[ActionWater] = VoteCountWater
+	currentVotes.Actions[ActionNothing] = VoteCountNothing
+
+	json.NewEncoder(w).Encode(currentVotes)
 }
 
 func NewApplication() (*Application, error) {
@@ -220,9 +196,8 @@ func main() {
 	if len(os.Getenv("PORT")) > 0 {
 		ServerPort = os.Getenv("PORT")
 	}
-	drainInterval, _ := time.ParseDuration("1s")
 	srv := &graceful.Server{
-		Timeout: drainInterval,
+		Timeout: 1 * time.Second,
 		Server: &http.Server{
 			Addr:    ":" + ServerPort,
 			Handler: middle,

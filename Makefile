@@ -17,7 +17,10 @@ fmt:
 	go fmt *.go
 
 run: $(TARGET)
-	foreman start
+	forego start
+
+watch: $(TARGET)
+	LIVEPLANTDEBUG=1 reflex -r '\.go$$' -s -- sh -c 'make run'
 
 clean: 
 	rm $(TARGET)
