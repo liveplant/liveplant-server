@@ -20,7 +20,7 @@ run: $(TARGET)
 	forego start
 
 watch: $(TARGET)
-	LIVEPLANTDEBUG=1 reflex -r '\.go$' -s -- sh -c 'make run'
+	LIVEPLANTDEBUG=1 reflex -r '\.go$$' -s -- sh -c 'make run'
 
 clean: 
 	rm $(TARGET)
