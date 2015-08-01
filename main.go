@@ -35,11 +35,37 @@ type CurrentAction struct {
 }
 
 func GetCurrentAction(w http.ResponseWriter, r *http.Request) {
-	action := &CurrentAction{
-		Action:        GetWinningAction(),
-		UnixTimestamp: int64(time.Now().Unix()),
+
+	update()
+
+	json.NewEncoder(w).Encode(lastExecutedAction)
+}
+
+// Number of seconds before votes are processed and reset
+const votingTimePeriod int64 = 30
+
+var lastExecutedAction = CurrentAction{
+		Action:        ActionNothing,
+		UnixTimestamp: 0,
 	}
-	json.NewEncoder(w).Encode(action)
+
+func update() {
+
+	var currentTime = int64(time.Now().Unix())
+
+	if (currentTime - lastExecutedAction.UnixTimestamp) >= votingTimePeriod {
+		// The voting time period is over, so update the current winning vote
+
+		lastExecutedAction.Action = GetWinningAction()
+		lastExecutedAction.UnixTimestamp = currentTime
+
+		resetVoteCount()
+	}
+}
+
+func resetVoteCount() {
+	VoteCountWater   = 0
+	VoteCountNothing = 0
 }
 
 func GetWinningAction() string {
