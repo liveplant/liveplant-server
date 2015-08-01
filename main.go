@@ -45,9 +45,9 @@ func GetCurrentAction(w http.ResponseWriter, r *http.Request) {
 const votingTimePeriod int64 = 30
 
 var lastExecutedAction = CurrentAction{
-		Action:        ActionNothing,
-		UnixTimestamp: 0,
-	}
+	Action:        ActionNothing,
+	UnixTimestamp: 0,
+}
 
 func update() {
 
@@ -64,7 +64,7 @@ func update() {
 }
 
 func resetVoteCount() {
-	VoteCountWater   = 0
+	VoteCountWater = 0
 	VoteCountNothing = 0
 }
 
