@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -151,10 +152,21 @@ func GetVotes(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(currentVoteInfo)
 }
-
 func NewApplication() (*Application, error) {
 	app := &Application{}
 	return app, nil
+}
+
+type preFlightHandler func(http.ResponseWriter, *http.Request)
+
+func NewPreFlightHandler(methods ...string) preFlightHandler {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if origin := r.Header.Get("Origin"); origin != "" {
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+			w.Header().Set("Access-Control-Allow-Methods", strings.Join(methods, ", "))
+			w.Header().Set("Access-Control-Allow-Headers", "content-type")
+		}
+	}
 }
 
 func (app *Application) mux() *gorilla_mux.Router {
@@ -163,6 +175,7 @@ func (app *Application) mux() *gorilla_mux.Router {
 	router.HandleFunc("/current_action", GetCurrentAction).Methods("GET")
 	router.HandleFunc("/votes", PostVotes).Methods("POST")
 	router.HandleFunc("/votes", GetVotes).Methods("GET")
+	router.HandleFunc("/votes", NewPreFlightHandler("GET", "POST")).Methods("OPTIONS")
 
 	return router
 }
