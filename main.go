@@ -36,10 +36,24 @@ type CurrentAction struct {
 
 func GetCurrentAction(w http.ResponseWriter, r *http.Request) {
 	action := &CurrentAction{
-		Action:        ActionWater,
+		Action:        GetWinningAction(),
 		UnixTimestamp: int64(time.Now().Unix()),
 	}
 	json.NewEncoder(w).Encode(action)
+}
+
+func GetWinningAction() string {
+	// Return the action that has the greatest number of votes
+
+	var winningAction string
+
+	if VoteCountWater > VoteCountNothing {
+		winningAction = ActionWater
+	} else {
+		winningAction = ActionNothing
+	}
+
+	return winningAction
 }
 
 func DebugPrintHttpRequest(r *http.Request) {
@@ -99,33 +113,43 @@ func PostVotes(w http.ResponseWriter, r *http.Request) {
 	// { "message":string }
 }
 
+type ActionInfo struct {
+	Name        string `json:"name"`
+	DisplayName string `json:"displayName"`
+	VoteCount   int    `json:"voteCount"`
+}
+
+type CurrentVoteInfo struct {
+	Actions []ActionInfo `json:"actions"`
+}
+
 /*
 Example response from GET /votes
-A json dictionary that shows the current number
-of votes that have been cast for each action.
 {
-  "actions": {
-    "water": 1,
-    "nothing": 0
-  }
+  "actions": [
+    {
+      "name": "nothing",
+      "displayName": "Nothing",
+      "voteCount": 123
+    },
+    {
+      "name": "water",
+      "displayName": "Water",
+      "voteCount": 47
+    }
+  ]
 }
 */
-type CurrentVoteCount struct {
-	Actions map[string]int `json:"actions"`
-}
-
 func GetVotes(w http.ResponseWriter, r *http.Request) {
 
-	log.Debug("GetVotes called")
-
-	currentVotes := &CurrentVoteCount{
-		Actions: make(map[string]int),
+	currentVoteInfo := &CurrentVoteInfo{
+		Actions: []ActionInfo{
+			ActionInfo{Name: ActionNothing, DisplayName: "Nothing", VoteCount: VoteCountNothing},
+			ActionInfo{Name: ActionWater, DisplayName: "Water", VoteCount: VoteCountWater},
+		},
 	}
 
-	currentVotes.Actions[ActionWater] = VoteCountWater
-	currentVotes.Actions[ActionNothing] = VoteCountNothing
-
-	json.NewEncoder(w).Encode(currentVotes)
+	json.NewEncoder(w).Encode(currentVoteInfo)
 }
 
 func NewApplication() (*Application, error) {
@@ -196,8 +220,9 @@ func main() {
 	if len(os.Getenv("PORT")) > 0 {
 		ServerPort = os.Getenv("PORT")
 	}
+	drainInterval, _ := time.ParseDuration("1s")
 	srv := &graceful.Server{
-		Timeout: 1 * time.Second,
+		Timeout: drainInterval,
 		Server: &http.Server{
 			Addr:    ":" + ServerPort,
 			Handler: middle,
