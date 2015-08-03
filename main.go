@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
 	log "github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/Sirupsen/logrus"
 	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/carbocation/interpose"
 	gorilla_mux "github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/gorilla/mux"
@@ -110,6 +111,11 @@ type Vote struct {
 	Action string `json:"action"`
 }
 
+type VoteReceipt struct {
+	Message string `json:"message"`
+	Vote    Vote   `json:"vote"`
+}
+
 func PostVotes(w http.ResponseWriter, r *http.Request) {
 
 	log.Debug("PostVotes called")
@@ -118,26 +124,33 @@ func PostVotes(w http.ResponseWriter, r *http.Request) {
 
 	decoder := json.NewDecoder(r.Body)
 	var vote Vote
+	var message string
 	err := decoder.Decode(&vote)
 
 	if err == nil {
 
 		if vote.Action == ActionWater {
 			VoteCountWater++
-			log.Debug("Voted for action \""+ActionWater+"\" ", VoteCountWater)
+			message = fmt.Sprintf("Voted for action \"%s\" total count is %d", ActionWater, VoteCountWater)
 		} else if vote.Action == ActionNothing {
 			VoteCountNothing++
-			log.Debug("Voted for action \""+ActionNothing+"\" ", VoteCountNothing)
+			message = fmt.Sprintf("Voted for action \"%s\" Total Count: %d", ActionNothing, VoteCountNothing)
 		} else {
-			log.Debug("Encountered unhandled action \"" + vote.Action + "\"")
+			message = fmt.Sprintf("Encountered unhandled action \"%s\"", vote.Action)
+			// TODO: return a standard error object
+			w.WriteHeader(http.StatusBadRequest)
 		}
-
 	} else {
-		log.Debug("Error parsing vote body: " + err.Error())
+		message = "Error parsing vote body: " + err.Error()
+		w.WriteHeader(http.StatusBadRequest)
 	}
 
-	// TODO - output a json response
-	// { "message":string }
+	log.Debug(message)
+
+	json.NewEncoder(w).Encode(&VoteReceipt{
+		Message: message,
+		Vote:    vote,
+	})
 }
 
 type ActionInfo struct {
