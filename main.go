@@ -38,8 +38,6 @@ type CurrentAction struct {
 
 func GetCurrentAction(w http.ResponseWriter, r *http.Request) {
 
-	update()
-
 	json.NewEncoder(w).Encode(lastExecutedAction)
 }
 
@@ -181,6 +179,8 @@ Example response from GET /votes
 }
 */
 func GetVotes(w http.ResponseWriter, r *http.Request) {
+
+	update()
 
 	currentVoteInfo := &CurrentVoteInfo{
 		Actions: []ActionInfo{
