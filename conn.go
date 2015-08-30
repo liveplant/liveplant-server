@@ -43,6 +43,7 @@ type connection struct {
 // readPump pumps messages from the websocket connection to the hub.
 func (c *connection) readPump() {
 	defer func() {
+
 		log.Println("inside the defer function of read pump")
 		h.unregister <- c
 		c.ws.Close()
