@@ -222,6 +222,7 @@ func (app *Application) mux() *gorilla_mux.Router {
 	router := gorilla_mux.NewRouter()
 
 	router.HandleFunc("/current_action", GetCurrentAction).Methods("GET")
+	router.HandleFunc("/current_action", NewPreFlightHandler("GET")).Methods("OPTIONS")
 	router.HandleFunc("/votes", PostVotes).Methods("POST")
 	router.HandleFunc("/votes", GetVotes).Methods("GET")
 	router.HandleFunc("/votes", NewPreFlightHandler("GET", "POST")).Methods("OPTIONS")
