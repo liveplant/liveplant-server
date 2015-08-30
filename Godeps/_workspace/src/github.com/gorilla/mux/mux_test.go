@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/gorilla/context"
+	"github.com/gorilla/context"
 )
 
 type routeTest struct {

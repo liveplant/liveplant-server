@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/carbocation/interpose"
+	"github.com/carbocation/interpose"
 )
 
 func main() {

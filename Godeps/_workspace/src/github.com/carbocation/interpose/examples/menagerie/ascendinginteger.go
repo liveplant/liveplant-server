@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/carbocation/interpose"
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/gorilla/context"
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/gorilla/mux"
+	"github.com/carbocation/interpose"
+	"github.com/gorilla/context"
+	"github.com/gorilla/mux"
 )
 
 type key int

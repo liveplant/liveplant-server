@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/Sirupsen/logrus"
+	"github.com/Sirupsen/logrus"
 )
 
 const (

@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/Sirupsen/logrus"
+	"github.com/Sirupsen/logrus"
 )
 
 type notice struct {

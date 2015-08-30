@@ -1,15 +1,15 @@
 package main
 
 import (
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/Sirupsen/logrus"
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/Sirupsen/logrus/hooks/airbrake"
+	"github.com/Sirupsen/logrus"
+	"github.com/Sirupsen/logrus/hooks/airbrake"
 )
 
 var log = logrus.New()
 
 func init() {
 	log.Formatter = new( // default
-	logrus.TextFormatter)
+		logrus.TextFormatter)
 	log.Hooks.Add(airbrake.NewHook("https://example.com", "xyz", "development"))
 }
 
