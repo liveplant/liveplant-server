@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/carbocation/interpose"
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/gorilla/mux"
+	"github.com/carbocation/interpose"
+	"github.com/gorilla/mux"
 	"github.com/stretchr/graceful"
 )
 

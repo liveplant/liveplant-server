@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	log "github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/Sirupsen/logrus"
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/carbocation/interpose"
-	gorilla_mux "github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/gorilla/mux"
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/tylerb/graceful"
+	log "github.com/Sirupsen/logrus"
+	"github.com/carbocation/interpose"
+	gorilla_mux "github.com/gorilla/mux"
+	"github.com/gorilla/websocket"
+	"github.com/tylerb/graceful"
+	"io"
 	"net/http"
 	"net/http/httputil"
 	"os"
@@ -22,11 +24,18 @@ const (
 	ActionNothing string = "nothing"
 )
 
+// message sent to us by the javascript client
+type message struct {
+	Handle string `json:"handle"`
+	Text   string `json:"text"`
+}
+
 // Variables for keeping track of the current vote count
 // for each action.
 // These should probably be stored in redis at some point.
 var VoteCountWater int = 0
 var VoteCountNothing int = 0
+
 
 type Application struct {
 }
@@ -208,6 +217,7 @@ func NewPreFlightHandler(methods ...string) preFlightHandler {
 	}
 }
 
+//thad: the name of a function can be a type? :OOOOOOOOOOO
 func (app *Application) mux() *gorilla_mux.Router {
 	router := gorilla_mux.NewRouter()
 
@@ -215,6 +225,7 @@ func (app *Application) mux() *gorilla_mux.Router {
 	router.HandleFunc("/votes", PostVotes).Methods("POST")
 	router.HandleFunc("/votes", GetVotes).Methods("GET")
 	router.HandleFunc("/votes", NewPreFlightHandler("GET", "POST")).Methods("OPTIONS")
+	router.HandleFunc("/ws", serveWs)
 
 	return router
 }
@@ -249,11 +260,83 @@ func InitLogLevel() {
 	}
 }
 
+// validateMessage so that we know it's valid JSON and contains a Handle and
+// Text
+func validateMessage(data []byte) (message, error) {
+	var msg message
+
+	if err := json.Unmarshal(data, &msg); err != nil {
+		return msg, err
+	}
+
+	if msg.Handle == "" && msg.Text == "" {
+		return msg, fmt.Errorf("Message has no Handle or Text")
+	}
+
+	return msg, nil
+}
+
+func handleWebsocket(w http.ResponseWriter, r *http.Request) {
+	//var test []byte
+	fmt.Printf("The websocket version is %s\n", r.Header["Sec-Websocket-Version"])
+	if r.Method != "GET" {
+		http.Error(w, "Method not allowed", 405)
+		return
+	}
+fmt.Printf("after check if get")
+	// websocket.Upgrader: Upgrade upgrades the HTTP server connection to the WebSocket protocol.
+	ws, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		//log.WithField("err", err).Println("Upgrading to websockets")
+		//http.Error(w, "Error Upgrading to websockets", 400)
+		fmt.Printf("%s\n", err.Error())
+		http.Error(w, err.Error(), 400)
+		return
+	}
+fmt.Printf("after upgrader")
+	// id := rr.register(ws)
+
+	//for {
+		mt, data, err := ws.ReadMessage()
+		ctx := log.Fields{"mt": mt, "data": data, "err": err}
+		 if err != nil {
+		 	if err == io.EOF {
+		 		log.WithFields(ctx).Info("Websocket closed!")
+		 	} else {
+	 		log.WithFields(ctx).Error("Error reading websocket message")
+		 	}
+		 	//return
+		 }
+		// fmt.Printf("after reading a message")
+		// switch mt {
+		// case websocket.TextMessage:
+		// 	msg, err := validateMessage(data)
+		// 	if err != nil {
+		// 		ctx["msg"] = msg
+		// 		ctx["err"] = err
+		// 		log.WithFields(ctx).Error("Invalid Message")
+				
+		// 	}
+		// 	test = append(test[:], data[:]...) //just in case, this is how u convert byte[] to string in golang string(data[:])
+		// 	log.Info(data)
+		// 	// rw.publish(data)
+		// default:
+		// 	log.WithFields(ctx).Warning("Unknown Message!")
+		// }
+	//}
+
+	// rr.deRegister(id)
+
+	//uhh not sure why this was used but let's actually return data like below ws.WriteMessage(websocket.CloseMessage, []byte{})
+	ws.WriteMessage(websocket.TextMessage, data)
+}
+
 func main() {
 
 	InitLogLevel()
 
 	log.Println("Launching liveplant server")
+	go h.run()
 
 	app, _ := NewApplication()
 	middle := interpose.New()

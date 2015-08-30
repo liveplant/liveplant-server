@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/carbocation/interpose/adaptors"
+	"github.com/carbocation/interpose/adaptors"
 	"github.com/phyber/negroni-gzip/gzip"
 )
 

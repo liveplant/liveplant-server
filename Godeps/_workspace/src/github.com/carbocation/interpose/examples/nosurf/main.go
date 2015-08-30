@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/carbocation/interpose"
+	"github.com/carbocation/interpose/middleware"
+	"github.com/gorilla/mux"
 	"github.com/justinas/nosurf"
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/carbocation/interpose"
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/carbocation/interpose/middleware"
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/gorilla/mux"
 	"github.com/stretchr/graceful"
 )
 

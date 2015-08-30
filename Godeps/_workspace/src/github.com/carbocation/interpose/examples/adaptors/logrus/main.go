@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/carbocation/interpose"
+	"github.com/carbocation/interpose/adaptors"
 	"github.com/codegangsta/negroni"
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/carbocation/interpose"
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/carbocation/interpose/adaptors"
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/gorilla/mux"
+	"github.com/gorilla/mux"
 	"github.com/meatballhat/negroni-logrus"
 	"github.com/stretchr/graceful"
 )

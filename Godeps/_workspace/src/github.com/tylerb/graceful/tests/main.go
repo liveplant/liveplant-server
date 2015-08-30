@@ -5,7 +5,7 @@ import (
 	"sync"
 
 	"github.com/codegangsta/negroni"
-	"github.com/liveplant/liveplant-server/Godeps/_workspace/src/github.com/tylerb/graceful"
+	"github.com/tylerb/graceful"
 )
 
 func main() {
