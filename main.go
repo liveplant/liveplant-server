@@ -37,7 +37,6 @@ type CurrentAction struct {
 }
 
 func GetCurrentAction(w http.ResponseWriter, r *http.Request) {
-
 	json.NewEncoder(w).Encode(lastExecutedAction)
 }
 
