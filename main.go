@@ -34,6 +34,7 @@ type Application struct {
 type CurrentAction struct {
 	Action        string `json:"action"`
 	UnixTimestamp int64  `json:"unixTimestamp"`
+	VotingTimeRemaining int64 `json:"votingTimeRemaining"`
 }
 
 func GetCurrentAction(w http.ResponseWriter, r *http.Request) {
@@ -46,11 +47,13 @@ const votingTimePeriod int64 = 30
 var lastExecutedAction = CurrentAction{
 	Action:        ActionNothing,
 	UnixTimestamp: 0,
+	VotingTimeRemaining: 0,
 }
 
 func update() {
 
 	var currentTime = int64(time.Now().Unix())
+	lastExecutedAction.VotingTimeRemaining = votingTimePeriod - (currentTime - lastExecutedAction.UnixTimestamp)
 
 	if (currentTime - lastExecutedAction.UnixTimestamp) >= votingTimePeriod {
 		// The voting time period is over, so update the current winning vote
