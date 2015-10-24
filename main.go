@@ -32,9 +32,9 @@ type Application struct {
 }
 
 type CurrentAction struct {
-	Action        string `json:"action"`
-	UnixTimestamp int64  `json:"unixTimestamp"`
-	VotingTimeRemaining int64 `json:"votingTimeRemaining"`
+	Action              string `json:"action"`
+	UnixTimestamp       int64  `json:"unixTimestamp"`
+	VotingTimeRemaining int64  `json:"votingTimeRemaining"`
 }
 
 func GetCurrentAction(w http.ResponseWriter, r *http.Request) {
@@ -45,8 +45,8 @@ func GetCurrentAction(w http.ResponseWriter, r *http.Request) {
 const votingTimePeriod int64 = 30
 
 var lastExecutedAction = CurrentAction{
-	Action:        ActionNothing,
-	UnixTimestamp: 0,
+	Action:              ActionNothing,
+	UnixTimestamp:       0,
 	VotingTimeRemaining: 0,
 }
 
