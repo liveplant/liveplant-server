@@ -1,1 +1,2 @@
-web: liveplant-server
+web: liveplant-web
+clock: liveplant-clock

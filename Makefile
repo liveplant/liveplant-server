@@ -1,5 +1,8 @@
-SOURCES = $(shell find . -name "*.go")
-TARGET = $(GOPATH)/bin/liveplant-server
+SOURCES_WEB = $(shell find ./liveplant-web/ -name "*.go")
+TARGET_WEB = $(GOPATH)/bin/liveplant-web
+SOURCES_CLOCK = $(shell find ./liveplant-clock/ -name "*.go")
+TARGET_CLOCK = $(GOPATH)/bin/liveplant-clock
+TARGET = $(TARGET_WEB) $(TARGET_CLOCK)
 
 .PHONY: all deps fmt run clean print-%
 
@@ -7,7 +10,10 @@ TARGET = $(GOPATH)/bin/liveplant-server
 
 all: $(TARGET)
 
-$(TARGET): $(SOURCES)
+$(TARGET_WEB): $(SOURCES_WEB)
+	godep go install ./...
+
+$(TARGET_CLOCK): $(SOURCES_CLOCK)
 	godep go install ./...
 
 deps:
@@ -23,7 +29,7 @@ watch: $(TARGET)
 	LIVEPLANTDEBUG=1 reflex -r '\.go$$' -s -- sh -c 'make run'
 
 clean: 
-	rm $(TARGET)
+	rm -f $(TARGET_WEB) $(TARGET_CLOCK)
 
 print-%:
 	@echo $*=$($*)
